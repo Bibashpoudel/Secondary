@@ -2,6 +2,7 @@ import { ValidationPipe } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
 import { NestExpressApplication } from '@nestjs/platform-express';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
+import { useContainer } from 'class-validator';
 import { join } from 'path';
 import { AppModule } from './app.module';
 
@@ -31,6 +32,7 @@ async function bootstrap() {
   SwaggerModule.setup('swagger', app, document);
 
   const PORT = process.env.PORT || 5001;
+  useContainer(app.select(AppModule), { fallbackOnErrors: true });
 
   await app.listen(PORT, () => {
     console.log(`server is running in port http://localhost:${PORT}`);

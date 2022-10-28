@@ -1,14 +1,15 @@
-import { Injectable } from '@nestjs/common';
+import { HttpStatus, Injectable, Response } from '@nestjs/common';
 import { sendResponse } from 'src/global/response.helper';
 
 import * as argon from 'argon2';
 import { User, UserDocument } from 'src/users/user.schema';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
+
 @Injectable({})
 export class AuthService {
   constructor(@InjectModel(User.name) private userModel: Model<UserDocument>) {}
-  async login(dto: any) {
+  async login(@Response() res: any, dto: any) {
     console.log('dto', dto);
     try {
       const euser = await this.userModel.findOne({
@@ -16,7 +17,15 @@ export class AuthService {
       });
       // if user does not exist throw exception
       if (!euser) {
-        return sendResponse(false, 'user doesnot exist', null, 'failure', null);
+        return sendResponse(
+          res,
+          HttpStatus.BAD_REQUEST,
+          false,
+          'user doesnot exist',
+          null,
+          'failure',
+          null,
+        );
       }
       if (euser) {
         if (await argon.verify('10', dto.password)) {
@@ -27,14 +36,25 @@ export class AuthService {
       }
     } catch (error) {}
   }
-  async signup(dto: any) {
+  async signup(res: any, dto: any) {
     try {
+      console.log(dto);
       const euser = await this.userModel.findOne({
         email: dto.email,
       });
+
+      console.log(euser);
       // if user does not exist throw exception
       if (euser) {
-        return sendResponse(false, 'user already exist', null, 'failure', null);
+        return sendResponse(
+          res,
+          HttpStatus.BAD_REQUEST,
+          false,
+          'user already exist',
+          null,
+          'failure',
+          null,
+        );
       }
       const hash = await argon.hash(dto.password);
       const user = new this.userModel({
@@ -46,11 +66,26 @@ export class AuthService {
       await user.save();
       if (user) {
         console.log(user);
-        return sendResponse(true, 'user created ', null, 'successfull', null);
+        return sendResponse(
+          res,
+          HttpStatus.CREATED,
+          true,
+          'user created ',
+          null,
+          'successfull',
+          null,
+        );
       }
     } catch (error) {
-      throw error;
-      return sendResponse(false, null, error, 'error', null);
+      return sendResponse(
+        res,
+        HttpStatus.INTERNAL_SERVER_ERROR,
+        false,
+        null,
+        error,
+        'error',
+        null,
+      );
     }
   }
 }

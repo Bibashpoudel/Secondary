@@ -1,6 +1,13 @@
 import { Strategy } from 'passport-local';
 import { PassportStrategy } from '@nestjs/passport';
-import { Body, Injectable, UnauthorizedException } from '@nestjs/common';
+import {
+  Body,
+  HttpCode,
+  HttpStatus,
+  Injectable,
+  Response,
+  UnauthorizedException,
+} from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { AuthDto } from './dto';
 import { sendResponse } from 'src/global/response.helper';
@@ -11,13 +18,19 @@ export class LocalStrategy extends PassportStrategy(Strategy) {
     super();
   }
 
-  async validateUser(email: string, password: string): Promise<any> {
+  async validateUser(
+    @Response() res: any,
+    email: string,
+    password: string,
+  ): Promise<any> {
     const dto = { email: email, password: password };
     console.log('dto', dto);
-    const user = await this.authService.login(dto);
+    const user = await this.authService.login(res, dto);
     console.log('user', user);
     if (!user) {
       return sendResponse(
+        res,
+        HttpStatus.UNAUTHORIZED,
         false,
         null,
         'unathorized',

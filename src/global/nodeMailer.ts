@@ -1,4 +1,4 @@
-import { newAccount } from './nodeMailer.helper';
+import { codeDebug, newAccount } from './nodeMailer.helper';
 
 import * as nodemailer from 'nodemailer';
 
@@ -36,6 +36,9 @@ async function nodeMailer(requirements: any, forWhat: any) {
 
       //   case "contactUs_Message":
       //     return await sendContactUsMessage(requirements, transporter, res);
+
+      case 'debug':
+        return await codeDebug(requirements, transporter);
     }
   } catch (err) {
     console.log(err);

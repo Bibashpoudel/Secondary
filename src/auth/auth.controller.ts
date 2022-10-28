@@ -5,10 +5,11 @@ import {
   HttpStatus,
   Post,
   Request,
+  Response,
   UseGuards,
 } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
-import { Response } from 'express';
+
 import { nodeMailer } from 'src/global/nodeMailer';
 import { sendResponse } from 'src/global/response.helper';
 import { AuthService } from './auth.service';
@@ -21,14 +22,14 @@ export class AuthController {
 
   @UseGuards(LocalAuthGuard)
   @Post('signin')
-  async login(@Request() req: any) {
+  async login(@Request() req: any, @Response() res: any) {
     //nodeMailer({ bibash: 'bibash' }, 'newAccount');
     console.log('bibash');
     return req.user;
   }
 
   @Post('signup')
-  async signup(@Body() dto: CreateDto) {
-    return this.authService.signup(dto);
+  async signup(@Response() res: any, @Body() dto: CreateDto) {
+    return this.authService.signup(res, dto);
   }
 }

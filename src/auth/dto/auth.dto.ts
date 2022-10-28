@@ -1,4 +1,12 @@
-import { IsEmail, IsNotEmpty, IsNumber, IsString } from 'class-validator';
+import {
+  IsEmail,
+  IsNotEmpty,
+  IsNumber,
+  IsString,
+  Validate,
+} from 'class-validator';
+import { CustomEmailvalidator } from 'src/validator/email.validator';
+import { CustomPhonevalidator } from 'src/validator/phone.validator';
 
 export class AuthDto {
   @IsEmail()
@@ -11,7 +19,9 @@ export class AuthDto {
 }
 
 export class CreateDto {
+  @Validate(CustomEmailvalidator)
   email: string;
+  @Validate(CustomPhonevalidator)
   @IsNotEmpty()
   phone: string;
   @IsNotEmpty()
@@ -20,7 +30,4 @@ export class CreateDto {
   @IsNotEmpty()
   @IsString()
   fullName: string;
-  @IsNotEmpty()
-  @IsString()
-  gender: string;
 }
