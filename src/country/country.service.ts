@@ -1,10 +1,21 @@
-import { HttpStatus, Injectable, Res, Response } from '@nestjs/common';
+import {
+  HttpStatus,
+  Injectable,
+  Req,
+  Request,
+  Res,
+  Response,
+} from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { errorMessage } from 'src/global/debuge.mail';
 import { gMessage } from 'src/global/global.config';
 import { nodeMailer } from 'src/global/nodeMailer';
-import { sendResponse } from 'src/global/response.helper';
+import {
+  getQueryRequest,
+  paginationHelper,
+  sendResponse,
+} from 'src/global/response.helper';
 
 import { CityDocument } from './city.schema';
 import { Message } from './country.config';
@@ -27,22 +38,42 @@ export class CountryService {
     to update the proviences
     
      */
-  async addProviences(@Response() res: any, dto: any) {
+  async addProviences(@Response() res: any, dto: any, @Request() req: any) {
     try {
-      const proviences = new this.proviencesModel({
-        name: dto.name,
-        area: dto.area,
-      });
-      await proviences.save();
-      return sendResponse(
-        res,
-        HttpStatus.CREATED,
-        true,
-        null,
-        null,
-        Message.proviencesAdd,
-        null,
-      );
+      if (req.body.id) {
+        const provience = await this.proviencesModel.findOne({
+          _id: req.body.id,
+        });
+        provience.name = req.body.name;
+        provience.area = req.body.area;
+
+        await provience.save();
+        return sendResponse(
+          res,
+          HttpStatus.OK,
+          true,
+          null,
+          null,
+          Message.proviencesUpdated,
+          null,
+        );
+      } else {
+        const proviences = new this.proviencesModel({
+          name: dto.name,
+          area: dto.area,
+        });
+
+        await proviences.save();
+        return sendResponse(
+          res,
+          HttpStatus.CREATED,
+          true,
+          null,
+          null,
+          Message.proviencesAdd,
+          null,
+        );
+      }
     } catch (error) {
       //send error message through mail for debuging
       // errorMessage(error);
@@ -61,9 +92,64 @@ export class CountryService {
         This function is to display all the provience
     */
 
-  async getProviences(@Response() res: any) {
+  async getProviences(@Response() res: any, @Request() req: any) {
     try {
-    } catch (error) {}
+      const defaultSize: any = 10;
+      let searchq: any;
+      let selectq: any;
+      let sortq: any;
+      let page: any;
+      let size: any;
+      let populate: any;
+      let populate1: any;
+
+      if (req.query.page && !isNaN(req.query.page) && req.query.page != 0) {
+        page = Math.abs(req.query.page);
+      } else {
+        page = 1;
+      }
+      if (req.query.size && !isNaN(req.query.size) && req.query.size != 0) {
+        size = Math.abs(req.query.size);
+      } else {
+        size = defaultSize;
+      }
+
+      const datas = await getQueryRequest(
+        this.proviencesModel,
+        searchq,
+        selectq,
+        sortq,
+        page,
+        size,
+        populate,
+        populate1,
+      );
+
+      return paginationHelper(
+        res,
+        HttpStatus.OK,
+        true,
+        datas.data,
+        gMessage.dataObtain,
+        page,
+        size,
+        datas.totaldata,
+      );
+    } catch (error) {
+      // send error message through mail for debuging
+
+      // errorMessage(error);
+
+      return sendResponse(
+        res,
+        HttpStatus.INTERNAL_SERVER_ERROR,
+        false,
+        null,
+        gMessage.serverError,
+        gMessage.somethingWrong,
+        null,
+      );
+    }
   }
 
   /* 
@@ -71,23 +157,44 @@ export class CountryService {
       to update the dsitrict also
         any user who are login can add district
       */
-  async addDistrict(@Response() res: any, dto: any) {
+  async addDistrict(@Response() res: any, @Request() req: any, dto: any) {
     try {
-      const district = new this.districtsModel({
-        name: dto.name,
-        area: dto.area,
-        proviencesId: dto.proviencesId,
-      });
-      await district.save();
-      return sendResponse(
-        res,
-        HttpStatus.CREATED,
-        true,
-        null,
-        null,
-        Message.districtAdd,
-        null,
-      );
+      if (req.body.id) {
+        const district = await this.districtsModel.findOne({
+          _id: req.body.id,
+        });
+
+        district.name = req.body.name;
+        district.area = req.body.area;
+        district.proviencesId = req.body.proviencesId;
+
+        await district.save();
+        return sendResponse(
+          res,
+          HttpStatus.OK,
+          true,
+          null,
+          null,
+          Message.districtUpdated,
+          null,
+        );
+      } else {
+        const district = new this.districtsModel({
+          name: dto.name,
+          area: dto.area,
+          proviencesId: dto.proviencesId,
+        });
+        await district.save();
+        return sendResponse(
+          res,
+          HttpStatus.CREATED,
+          true,
+          null,
+          null,
+          Message.districtAdd,
+          null,
+        );
+      }
     } catch (error) {
       /* 
       send error message through mail for debuging 
@@ -104,6 +211,71 @@ export class CountryService {
       );
     }
   }
+
+  /* 
+        This function is to display all the provience
+    */
+
+  async getdistrict(@Response() res: any, @Request() req: any) {
+    try {
+      const defaultSize: any = 10;
+      let searchq: any;
+      let selectq: any;
+      let sortq: any;
+      let page: any;
+      let size: any;
+      let populate: any;
+      let populate1: any;
+
+      if (req.query.page && !isNaN(req.query.page) && req.query.page != 0) {
+        page = Math.abs(req.query.page);
+      } else {
+        page = 1;
+      }
+      if (req.query.size && !isNaN(req.query.size) && req.query.size != 0) {
+        size = Math.abs(req.query.size);
+      } else {
+        size = defaultSize;
+      }
+
+      const datas = await getQueryRequest(
+        this.districtsModel,
+        searchq,
+        selectq,
+        sortq,
+        page,
+        size,
+        populate,
+        populate1,
+      );
+
+      return paginationHelper(
+        res,
+        HttpStatus.OK,
+        true,
+        datas.data,
+        gMessage.dataObtain,
+        page,
+        size,
+        datas.totaldata,
+      );
+    } catch (error) {
+      // send error message through mail for debuging
+
+      // errorMessage(error);
+
+      return sendResponse(
+        res,
+        HttpStatus.INTERNAL_SERVER_ERROR,
+        false,
+        null,
+        gMessage.serverError,
+        gMessage.somethingWrong,
+        null,
+      );
+    }
+  }
+
   /* 
       this function is to add the city 
       to update the dsitrict also
@@ -132,6 +304,69 @@ export class CountryService {
       send error message through mail for debuging 
       */
       // errorMessage(error);
+      return sendResponse(
+        res,
+        HttpStatus.INTERNAL_SERVER_ERROR,
+        false,
+        null,
+        gMessage.serverError,
+        gMessage.somethingWrong,
+        null,
+      );
+    }
+  }
+  /* 
+        This function is to display all the provience
+    */
+
+  async getCity(@Response() res: any, @Request() req: any) {
+    try {
+      const defaultSize: any = 10;
+      let searchq: any;
+      let selectq: any;
+      let sortq: any;
+      let page: any;
+      let size: any;
+      let populate: any;
+      let populate1: any;
+
+      if (req.query.page && !isNaN(req.query.page) && req.query.page != 0) {
+        page = Math.abs(req.query.page);
+      } else {
+        page = 1;
+      }
+      if (req.query.size && !isNaN(req.query.size) && req.query.size != 0) {
+        size = Math.abs(req.query.size);
+      } else {
+        size = defaultSize;
+      }
+
+      const datas = await getQueryRequest(
+        this.cityModel,
+        searchq,
+        selectq,
+        sortq,
+        page,
+        size,
+        populate,
+        populate1,
+      );
+
+      return paginationHelper(
+        res,
+        HttpStatus.OK,
+        true,
+        datas.data,
+        gMessage.dataObtain,
+        page,
+        size,
+        datas.totaldata,
+      );
+    } catch (error) {
+      // send error message through mail for debuging
+
+      // errorMessage(error);
+
       return sendResponse(
         res,
         HttpStatus.INTERNAL_SERVER_ERROR,
