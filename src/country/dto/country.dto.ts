@@ -1,13 +1,16 @@
-import { IsNotEmpty, IsString } from 'class-validator';
+import { IsEmpty, IsNotEmpty, IsString } from 'class-validator';
 
 export class createProvienceDto {
   @IsString()
   @IsNotEmpty()
   name: string;
-
+  @IsString()
+  @IsNotEmpty()
   area: string;
 
   nofDistrict: string;
+
+  id: string;
 }
 
 export class createDistrictdto {
@@ -32,9 +35,11 @@ export class createCityDto {
 
   area: string;
 
+  @IsString()
   @IsNotEmpty()
   proviencesId: string;
 
+  @IsString()
   @IsNotEmpty()
   districtId: string;
 

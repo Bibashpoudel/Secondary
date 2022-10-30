@@ -38,14 +38,16 @@ export class CountryService {
     to update the proviences
     
      */
-  async addProviences(@Response() res: any, dto: any, @Request() req: any) {
+  async addProvinces(@Response() res: any, @Request() req: any, dto: any) {
     try {
+      console.log(dto);
       if (req.body.id) {
+        console.log('enter');
         const provience = await this.proviencesModel.findOne({
           _id: req.body.id,
         });
-        provience.name = req.body.name;
-        provience.area = req.body.area;
+        provience.name = dto.name;
+        provience.area = dto.id;
 
         await provience.save();
         return sendResponse(
@@ -77,6 +79,7 @@ export class CountryService {
     } catch (error) {
       //send error message through mail for debuging
       // errorMessage(error);
+      console.log(error);
       return sendResponse(
         res,
         HttpStatus.INTERNAL_SERVER_ERROR,
@@ -124,7 +127,7 @@ export class CountryService {
         populate,
         populate1,
       );
-
+      console.log('total daat', datas.totalData);
       return paginationHelper(
         res,
         HttpStatus.OK,
@@ -133,7 +136,41 @@ export class CountryService {
         gMessage.dataObtain,
         page,
         size,
-        datas.totaldata,
+        datas.totalData,
+      );
+    } catch (error) {
+      // send error message through mail for debuging
+
+      // errorMessage(error);
+
+      return sendResponse(
+        res,
+        HttpStatus.INTERNAL_SERVER_ERROR,
+        false,
+        null,
+        gMessage.serverError,
+        gMessage.somethingWrong,
+        null,
+      );
+    }
+  }
+
+  /* 
+    this function is to delete the province using id
+  */
+  async deleteProvince(@Response() res: any, @Request() req: any) {
+    try {
+      await this.proviencesModel.findOneAndDelete({
+        _id: req.params.id,
+      });
+      return sendResponse(
+        res,
+        HttpStatus.OK,
+        true,
+        null,
+        null,
+        Message.proviencesDeleted,
+        null,
       );
     } catch (error) {
       // send error message through mail for debuging
@@ -216,7 +253,7 @@ export class CountryService {
         This function is to display all the provience
     */
 
-  async getdistrict(@Response() res: any, @Request() req: any) {
+  async getDistrict(@Response() res: any, @Request() req: any) {
     try {
       const defaultSize: any = 10;
       let searchq: any;
@@ -257,7 +294,41 @@ export class CountryService {
         gMessage.dataObtain,
         page,
         size,
-        datas.totaldata,
+        datas.totalData,
+      );
+    } catch (error) {
+      // send error message through mail for debuging
+
+      // errorMessage(error);
+
+      return sendResponse(
+        res,
+        HttpStatus.INTERNAL_SERVER_ERROR,
+        false,
+        null,
+        gMessage.serverError,
+        gMessage.somethingWrong,
+        null,
+      );
+    }
+  }
+
+  /* 
+    this function is to delete the district using id
+  */
+  async deleteDistrict(@Response() res: any, @Request() req: any) {
+    try {
+      await this.districtsModel.findOneAndDelete({
+        _id: req.params.id,
+      });
+      return sendResponse(
+        res,
+        HttpStatus.OK,
+        true,
+        null,
+        null,
+        Message.districtDeleted,
+        null,
       );
     } catch (error) {
       // send error message through mail for debuging
@@ -281,24 +352,44 @@ export class CountryService {
       to update the dsitrict also
       any user who are login  can add city 
       */
-  async addCity(@Response() res: any, dto: any) {
+  async addCity(@Response() res: any, @Request() req: any, dto: any) {
     try {
-      const city = new this.cityModel({
-        name: dto.name,
-        area: dto.area,
-        proviencesId: dto.proviencesId,
-        districtId: dto.districtId,
-      });
-      await city.save();
-      return sendResponse(
-        res,
-        HttpStatus.CREATED,
-        true,
-        null,
-        null,
-        Message.cityAdd,
-        null,
-      );
+      if (req.body.id) {
+        const city = await this.cityModel.findOne({ _id: req.body.id });
+        city.name = dto.name;
+        city.area = dto.area;
+        city.proviencesId = dto.proviencesId;
+        city.districtId = dto.districtId;
+
+        await city.save();
+
+        return sendResponse(
+          res,
+          HttpStatus.OK,
+          true,
+          null,
+          null,
+          Message.cityUpdated,
+          null,
+        );
+      } else {
+        const city = new this.cityModel({
+          name: dto.name,
+          area: dto.area,
+          proviencesId: dto.proviencesId,
+          districtId: dto.districtId,
+        });
+        await city.save();
+        return sendResponse(
+          res,
+          HttpStatus.CREATED,
+          true,
+          null,
+          null,
+          Message.cityAdd,
+          null,
+        );
+      }
     } catch (error) {
       /* 
       send error message through mail for debuging 
@@ -360,7 +451,41 @@ export class CountryService {
         gMessage.dataObtain,
         page,
         size,
-        datas.totaldata,
+        datas.totalData,
+      );
+    } catch (error) {
+      // send error message through mail for debuging
+
+      // errorMessage(error);
+
+      return sendResponse(
+        res,
+        HttpStatus.INTERNAL_SERVER_ERROR,
+        false,
+        null,
+        gMessage.serverError,
+        gMessage.somethingWrong,
+        null,
+      );
+    }
+  }
+
+  /* 
+    this function is to delete the city using id
+  */
+  async deleteCity(@Response() res: any, @Request() req: any) {
+    try {
+      await this.cityModel.findOneAndDelete({
+        _id: req.params.id,
+      });
+      return sendResponse(
+        res,
+        HttpStatus.OK,
+        true,
+        null,
+        null,
+        Message.cityDeleted,
+        null,
       );
     } catch (error) {
       // send error message through mail for debuging
