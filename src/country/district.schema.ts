@@ -18,7 +18,7 @@ export class District {
     ref: 'Proviences',
     required: true,
   })
-  proviencesId: Proviences;
+  provincesId: Proviences;
 
   @Prop()
   nofCity: string;

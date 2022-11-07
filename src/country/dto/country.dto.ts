@@ -21,7 +21,7 @@ export class createDistrictdto {
   area: string;
 
   @IsNotEmpty()
-  proviencesId: string;
+  provincesId: string;
 
   nofCity: string;
 
@@ -37,7 +37,7 @@ export class createCityDto {
 
   @IsString()
   @IsNotEmpty()
-  proviencesId: string;
+  provincesId: string;
 
   @IsString()
   @IsNotEmpty()

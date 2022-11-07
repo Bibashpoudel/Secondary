@@ -43,7 +43,7 @@ export class CountryController {
   async getDistrict(@Response() res: any, @Request() req: any) {
     return this.countryService.getDistrict(res, req);
   }
-  @Delete('provinces/delete/:id')
+  @Delete('district/delete/:id')
   async deleteDistrict(@Response() res: any, @Request() req: any) {
     return this.countryService.deleteDistrict(res, req);
   }

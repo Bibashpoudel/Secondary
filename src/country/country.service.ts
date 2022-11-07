@@ -1,11 +1,4 @@
-import {
-  HttpStatus,
-  Injectable,
-  Req,
-  Request,
-  Res,
-  Response,
-} from '@nestjs/common';
+import { HttpStatus, Injectable, Request, Response } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { errorMessage } from 'src/global/debuge.mail';
@@ -17,7 +10,7 @@ import {
   sendResponse,
 } from 'src/global/response.helper';
 
-import { CityDocument } from './city.schema';
+import { City, CityDocument } from './city.schema';
 import { Message } from './country.config';
 import { District, DistrictDocument } from './district.schema';
 import { Proviences, ProviencesDocument } from './provinces.schema';
@@ -29,7 +22,7 @@ export class CountryService {
     private proviencesModel: Model<ProviencesDocument>,
     @InjectModel(District.name)
     private districtsModel: Model<DistrictDocument>,
-    @InjectModel(Proviences.name)
+    @InjectModel(City.name)
     private cityModel: Model<CityDocument>,
   ) {}
 
@@ -203,7 +196,7 @@ export class CountryService {
 
         district.name = req.body.name;
         district.area = req.body.area;
-        district.proviencesId = req.body.proviencesId;
+        district.provincesId = req.body.provincesId;
 
         await district.save();
         return sendResponse(
@@ -219,7 +212,7 @@ export class CountryService {
         const district = new this.districtsModel({
           name: dto.name,
           area: dto.area,
-          proviencesId: dto.proviencesId,
+          provincesId: dto.provincesId,
         });
         await district.save();
         return sendResponse(
@@ -237,6 +230,7 @@ export class CountryService {
       send error message through mail for debuging 
       */
       // errorMessage(error);
+      console.log(error);
       return sendResponse(
         res,
         HttpStatus.INTERNAL_SERVER_ERROR,
@@ -263,6 +257,7 @@ export class CountryService {
       let size: any;
       let populate: any;
       let populate1: any;
+      populate = { path: 'provincesId', select: 'name' };
 
       if (req.query.page && !isNaN(req.query.page) && req.query.page != 0) {
         page = Math.abs(req.query.page);
@@ -300,7 +295,7 @@ export class CountryService {
       // send error message through mail for debuging
 
       // errorMessage(error);
-
+      console.log(error);
       return sendResponse(
         res,
         HttpStatus.INTERNAL_SERVER_ERROR,
@@ -358,7 +353,7 @@ export class CountryService {
         const city = await this.cityModel.findOne({ _id: req.body.id });
         city.name = dto.name;
         city.area = dto.area;
-        city.proviencesId = dto.proviencesId;
+        city.provincesId = dto.provincesId;
         city.districtId = dto.districtId;
 
         await city.save();
@@ -376,7 +371,7 @@ export class CountryService {
         const city = new this.cityModel({
           name: dto.name,
           area: dto.area,
-          proviencesId: dto.proviencesId,
+          provincesId: dto.provincesId,
           districtId: dto.districtId,
         });
         await city.save();
@@ -432,6 +427,10 @@ export class CountryService {
         size = defaultSize;
       }
 
+      populate = {
+        path: 'provincesId',
+      };
+      populate1 = { path: 'districtId' };
       const datas = await getQueryRequest(
         this.cityModel,
         searchq,

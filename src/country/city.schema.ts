@@ -18,7 +18,7 @@ export class City {
     ref: 'Proviences',
     required: true,
   })
-  proviencesId: Proviences;
+  provincesId: Proviences;
 
   @Prop({
     type: mongoose.Schema.Types.ObjectId,
