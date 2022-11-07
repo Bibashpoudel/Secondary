@@ -6,8 +6,24 @@ import { useContainer } from 'class-validator';
 import { join } from 'path';
 import { AppModule } from './app.module';
 
+import * as session from 'express-session';
+import * as passport from 'passport';
+
 async function bootstrap() {
   const app = await NestFactory.create<NestExpressApplication>(AppModule);
+
+  // app.set('trust proxy', 1); // trust first proxy
+  // app.use(
+  //   session({
+  //     secret: process.env.SESSION_KEY,
+  //     resave: false,
+  //     saveUninitialized: true,
+  //     cookie: { maxAge: 3600000 },
+  //   }),
+  // );
+  // app.use(passport.initialize());
+  // app.use(passport.session());
+
   app.setGlobalPrefix('/api/v1');
   app.useGlobalPipes(
     new ValidationPipe({

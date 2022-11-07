@@ -45,7 +45,9 @@ async function getQueryRequest(
     datas.totalData = await model.countDocuments(searchq);
 
     return datas;
-  } catch (error) {}
+  } catch (error) {
+    console.log(error);
+  }
 }
 
 async function paginationHelper(

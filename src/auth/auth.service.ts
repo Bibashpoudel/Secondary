@@ -5,36 +5,39 @@ import * as argon from 'argon2';
 import { User, UserDocument } from 'src/users/user.schema';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
+import { JwtService } from '@nestjs/jwt';
+import { gMessage } from 'src/global/global.config';
 
 @Injectable({})
 export class AuthService {
-  constructor(@InjectModel(User.name) private userModel: Model<UserDocument>) {}
+  constructor(
+    @InjectModel(User.name) private userModel: Model<UserDocument>,
+    private jwtService: JwtService,
+  ) {}
   async login(@Response() res: any, dto: any) {
-    console.log('dto', dto);
     try {
       const euser = await this.userModel.findOne({
-        email: dto.email,
+        email: dto.username,
       });
-      // if user does not exist throw exception
-      if (!euser) {
-        return sendResponse(
-          res,
-          HttpStatus.BAD_REQUEST,
-          false,
-          'user doesnot exist',
-          null,
-          'failure',
-          null,
-        );
-      }
+
       if (euser) {
-        if (await argon.verify('10', dto.password)) {
-          return euser;
+        if (await argon.verify(euser.password, dto.password)) {
+          return sendResponse(
+            res,
+            HttpStatus.OK,
+            true,
+            euser,
+            null,
+            gMessage.dataObtain,
+            await this.token(euser),
+          );
         } else {
           return null;
         }
       }
-    } catch (error) {}
+    } catch (error) {
+      console.log(error);
+    }
   }
   async signup(res: any, dto: any) {
     try {
@@ -87,5 +90,16 @@ export class AuthService {
         null,
       );
     }
+  }
+
+  async token(user: any) {
+    const payload = {
+      name: user.fullName,
+      id: user._id,
+      phone: user.phone,
+      role: user.role ? user.role : 'bibash',
+    };
+
+    return { accessToken: this.jwtService.sign(payload) };
   }
 }

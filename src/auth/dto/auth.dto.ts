@@ -9,9 +9,9 @@ import { CustomEmailvalidator } from 'src/validator/email.validator';
 import { CustomPhonevalidator } from 'src/validator/phone.validator';
 
 export class AuthDto {
-  @IsEmail()
+  @IsString()
   @IsNotEmpty()
-  email: string;
+  username: string;
 
   @IsString()
   @IsNotEmpty()

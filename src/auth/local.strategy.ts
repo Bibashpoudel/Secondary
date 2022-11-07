@@ -18,26 +18,22 @@ export class LocalStrategy extends PassportStrategy(Strategy) {
     super();
   }
 
-  async validateUser(
-    @Response() res: any,
-    email: string,
+  async validate(
+    username: string,
     password: string,
+    @Response() res: any,
   ): Promise<any> {
-    const dto = { email: email, password: password };
-    console.log('dto', dto);
-    const user = await this.authService.login(res, dto);
-    console.log('user', user);
-    if (!user) {
-      return sendResponse(
-        res,
-        HttpStatus.UNAUTHORIZED,
-        false,
-        null,
-        'unathorized',
-        'incorrect username or password',
-        null,
-      );
-    }
-    return user;
+    console.log('response', res);
+    console.log('dto', username, 'abc', password);
+    const dto = {
+      username: username,
+      password: password,
+    };
+    // const user = await this.authService.login(dto);
+
+    // if (!user) {
+    //   throw new UnauthorizedException();
+    // }
+    // return user;
   }
 }
