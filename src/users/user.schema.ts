@@ -36,5 +36,11 @@ export class User {
     required: false,
   })
   companyId: Company;
+
+  @Prop({ default: false })
+  isActive: boolean;
+
+  @Prop({ default: false })
+  isOnline: boolean;
 }
 export const UserSchema = SchemaFactory.createForClass(User);
