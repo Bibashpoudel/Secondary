@@ -1,7 +1,7 @@
 import { HttpStatus, Injectable, Request, Response } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
-import { errorMessage } from 'src/global/debuge.mail';
+
 import { gMessage } from 'src/global/global.config';
 import { nodeMailer } from 'src/global/nodeMailer';
 import {
@@ -9,11 +9,10 @@ import {
   paginationHelper,
   sendResponse,
 } from 'src/global/response.helper';
-
-import { City, CityDocument } from './city.schema';
+import { City, CityDocument } from './city/city.schema';
 import { Message } from './country.config';
-import { District, DistrictDocument } from './district.schema';
-import { Proviences, ProviencesDocument } from './provinces.schema';
+import { District, DistrictDocument } from './district/district.schema';
+import { Proviences, ProviencesDocument } from './provinces/provinces.schema';
 
 @Injectable({})
 export class CountryService {

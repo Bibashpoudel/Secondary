@@ -1,8 +1,8 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import mongoose, { Document } from 'mongoose';
 import { User } from 'src/users/user.schema';
-import { District } from './district.schema';
-import { Proviences } from './provinces.schema';
+import { District } from '../district/district.schema';
+import { Proviences } from '../provinces/provinces.schema';
 
 export type CityDocument = City & Document;
 

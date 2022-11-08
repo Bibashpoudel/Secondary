@@ -1,16 +1,7 @@
 import { Strategy } from 'passport-local';
 import { PassportStrategy } from '@nestjs/passport';
-import {
-  Body,
-  HttpCode,
-  HttpStatus,
-  Injectable,
-  Response,
-  UnauthorizedException,
-} from '@nestjs/common';
-import { AuthService } from './auth.service';
-import { AuthDto } from './dto';
-import { sendResponse } from 'src/global/response.helper';
+import { Injectable, Response } from '@nestjs/common';
+import { AuthService } from '../auth.service';
 
 @Injectable()
 export class LocalStrategy extends PassportStrategy(Strategy) {
@@ -29,11 +20,5 @@ export class LocalStrategy extends PassportStrategy(Strategy) {
       username: username,
       password: password,
     };
-    // const user = await this.authService.login(dto);
-
-    // if (!user) {
-    //   throw new UnauthorizedException();
-    // }
-    // return user;
   }
 }

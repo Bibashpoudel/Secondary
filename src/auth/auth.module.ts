@@ -6,10 +6,11 @@ import { User, UserSchema } from 'src/users/user.schema';
 import { UserService } from 'src/users/user.service';
 import { AuthController } from './auth.controller';
 import { AuthService } from './auth.service';
-import { GoogleStrategy } from './google.strategy';
-import { JwtStrategy } from './jwt.strategy';
-import { LocalStrategy } from './local.strategy';
+import { GoogleStrategy } from './strategy/google.strategy';
+
+import { LocalStrategy } from './strategy/local.strategy';
 import { SessionSerializer } from './session.serializer';
+import { JwtStrategy } from './strategy/jwt.strategy';
 
 @Module({
   imports: [

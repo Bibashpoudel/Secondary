@@ -7,8 +7,9 @@ import {
   Response,
   UseGuards,
 } from '@nestjs/common';
-import { AuthenticatedGuard } from 'src/auth/auth.guard';
-import { JwtGuard } from 'src/auth/jwt.guard';
+import { AuthenticatedGuard } from 'src/auth/guard/auth.guard';
+import { JwtGuard } from 'src/auth/guard/jwt.guard';
+
 import { gMessage } from 'src/global/global.config';
 import { sendResponse } from 'src/global/response.helper';
 

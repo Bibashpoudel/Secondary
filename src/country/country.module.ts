@@ -1,10 +1,10 @@
 import { Module } from '@nestjs/common';
 import { MongooseModule } from '@nestjs/mongoose';
-import { City, citySchema } from './city.schema';
+import { City, citySchema } from './city/city.schema';
 import { CountryController } from './country.controller';
 import { CountryService } from './country.service';
-import { District, districtSchema } from './district.schema';
-import { Proviences, proviencesSchema } from './provinces.schema';
+import { District, districtSchema } from './district/district.schema';
+import { Proviences, proviencesSchema } from './provinces/provinces.schema';
 
 @Module({
   imports: [

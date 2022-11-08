@@ -16,3 +16,11 @@
 6. create error message mailing function
 7. create global and module config files for user and country
 8. update sendresponse function with status code
+
+today todlist
+
+google login
+jwt verification
+login working properly
+register working properly
+google sigin also registering if email doesnot exist

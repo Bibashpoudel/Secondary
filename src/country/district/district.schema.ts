@@ -1,7 +1,7 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { User } from '@prisma/client';
 import mongoose, { Document } from 'mongoose';
-import { Proviences } from './provinces.schema';
+import { Proviences } from '../provinces/provinces.schema';
 
 export type DistrictDocument = District & Document;
 
